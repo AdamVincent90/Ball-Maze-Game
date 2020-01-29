@@ -1,0 +1,1520 @@
+/**
+Program:   Assignment 2: Application – Ball Maze
+Filename:  CBallMaze.java                              
+@author:   © Adam Vincent (200WXYZ)                       
+Course:    BEng/BSc/HND Computing Year 1        
+Module:    CSY1020 Problem Solving & Programming       
+Tutor:     Gary Hill                                   
+@version:  2.0 Incorporates Artificial Intelligence!  
+Date:      23/11/17                                    
+*/
+
+//Various imports for cBallMaze
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import java.text.DecimalFormat;
+
+
+
+
+
+
+// THESE ARE THE CALLING OF VARIOUS METHODS 
+
+public class CBallMaze extends JFrame implements ActionListener, ChangeListener {
+	
+	 Container yourContainer;     												 //declare container
+	 JScrollPane scrollsVH;       												 //declare vertical & horizontal scrolling
+	 JMenuBar topMenuBar;         												 //declare Menu Bar
+	 JMenu fileMenu, editMenu, hiScoreMenu, helpMenu; 							 //declare sub-Menus
+	 JMenuItem exitItem, fontItem, foreColor, backColor, helpItem, aboutItem, hiScores;
+	 String aboutBoxString = 	( " Application written by\n © Gary Hill BSc(Hons) MSc MPhil PGCE\n"
+			 					+ " Principal Lecturer - Computer Systems,\n School of Technology & Design,\n"
+			 					+ " University of Northampton\n St Georges Avenue,\n "
+			 					+ " Northampton, NN2 6JD,\n United Kingdom\n E-Mail: gary.hill@northampton.ac.uk\n"
+			 					+ " Tel.(Work) +44 (0)1604 735500 Ext. 3077\n http://www.eng.nene.ac.uk/~gary/\n"
+			 					+ " Fax.(Work) +44 (0)1604) 792650/717813.") ;
+	 
+	private JButton[] panelButton = new JButton[208];
+	
+	private int ballPosition = 15;
+	private int prevPosition = ballPosition;
+	private int ticks = 0;
+	private int hiscore = 0;
+	
+    private JTextField textField;
+    private JTextField textField1;
+    private JTextField textField3;
+    
+    private JTextField textFieldMins;
+    private JTextField textFieldSecs;
+    private JTextField textFieldHours;
+    
+    private JLabel jLOption;
+    private JLabel jLSquare;
+    private JLabel jLDirection;
+    private JLabel jLColon;
+    private JLabel jLTimer;
+    private JLabel jLSpeed;
+    
+    private JButton jLOption1;
+    private JButton jLOption2;
+    private JButton jLOption3;
+    private JButton jBExit;
+    private JButton jLUp;
+    private JButton jLRight;
+    private JButton jLDown;
+    private JButton jLLeft;
+    private JButton jLBlank1;
+    private JButton jLBlank2;
+    private JButton jLBlank3;
+    private JButton jLBlank4;
+    private JButton jLBlank5;
+    private JButton jBStart;
+    private JButton jBAutoRun;
+    private JButton jBReset;
+    private JButton jBAct;
+    private JButton compass;
+    private JButton goldenball;
+    
+    private JPanel panel;
+    private JPanel JPBottom;
+    private JPanel JPRight;
+    private JPanel JPRightTop;
+    private JPanel JPRightTimer;
+    private JPanel JPRightNav;
+    private JPanel JPRightOption;
+    
+    private JSlider jSlider;
+    
+    private Timer timer = new Timer(1000, this);
+    private Timer autoRunTimer;
+    
+    private DecimalFormat digit = new DecimalFormat("00");
+    
+    boolean A = true;
+    boolean lev1 = true;
+    boolean lev2 = false;
+    boolean lev3 = false;
+
+    private ImageIcon SandImage;
+    private ImageIcon WhiteImage;
+    private ImageIcon CompassWest;
+    private ImageIcon CompassSouth;
+    private ImageIcon CompassEast;
+    private ImageIcon CompassNorth;
+    private ImageIcon Goldball;
+    private ImageIcon StoneImage;
+    private ImageIcon GrayImage;
+    private ImageIcon BlackImage;
+    
+    
+   
+
+    private String Option1[] = {"sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand",
+    							"white", "sand", "white", "white", "white", "sand", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white",
+    							"white", "sand", "white", "white", "white", "sand", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white",
+    							"sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand",
+    							"white", "white", "sand", "white", "white", "white", "sand", "white", "white", "white", "white", "sand", "white", "white", "white", "white",
+    							"white", "white", "sand", "white", "white", "white", "sand", "white", "white", "white", "white", "sand", "white", "white", "white", "white",
+    							"sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand",
+    							"white", "sand", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white", "sand", "white", "white", "white",
+    							"white", "sand", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white", "sand", "white", "white", "white",
+    							"sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand",
+    							"white", "white", "sand", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white", "white", "white", "white",
+    							"white", "white", "sand", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white", "white", "white", "white",
+    							"goal", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand"};
+   
+    private String Option2[] = {"sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand",
+    							"white", "white", "white", "white", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white", "sand", "white",
+    							"white", "white", "white", "white", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white", "sand", "white",
+    							"sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand",
+    							"white", "sand", "white", "white", "white", "white", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white",
+    							"white", "sand", "white", "white", "white", "white", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white",
+    							"sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand",
+    							"white", "white", "white", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white", "white", "sand", "white",
+    							"white", "white", "white", "white", "white", "white", "sand", "white", "white", "white", "white", "white", "white", "white", "sand", "white",
+    							"sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand",
+    							"white", "white", "sand", "white", "white", "white", "white", "white", "white", "white", "sand", "white", "white", "white", "white", "white",
+    							"white", "white", "sand", "white", "white", "white", "white", "white", "white", "white", "sand", "white", "white", "white", "white", "white",
+    							"goal", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand"};
+    
+    private String Option3[] = {"white", "sand", "sand", "sand", "white", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "white",
+    							"white", "sand", "white", "sand", "white", "sand", "white", "white", "white", "white", "white", "white", "white", "sand", "white", 
+    							"white", "sand", "white", "sand", "white", "sand", "white", "white", "sand", "sand", "sand", "white", "white", "sand", "white",
+    							"white", "sand", "white", "sand", "white", "sand", "white", "sand", "sand", "white", "sand", "sand", "sand", "sand", "white",
+    							"white", "sand", "white", "sand", "sand", "sand", "white", "sand", "white", "white", "white", "white", "white", "white", "white",
+    							"white", "sand", "white", "white", "white", "white", "white", "sand", "white", "sand", "sand", "sand", "sand", "sand", "white",
+    							"white", "sand", "sand", "sand", "white", "white", "white", "sand",  "white", "sand", "white", "white", "white", "sand", "white",
+    							"white", "white", "white", "sand", "white", "white", "white", "white", "white", "sand", "white", "sand", "sand", "sand", "white",
+    							"white", "sand", "sand", "sand", "white", "sand", "sand", "sand", "white", "sand", "white", "sand", "white", "white", "white",
+    							"white", "sand", "white", "white", "white", "sand", "white", "sand", "white", "sand", "white", "sand", "white", "white", "white",
+    							"white", "sand", "sand", "sand", "sand", "sand", "white", "sand", "sand", "sand", "white", "sand", "sand", "sand", "white", 
+    							"white", "white", "white", "white", "white", "white", "white", "white", "white", "white", "white", "white", "white", "sand", "white",
+    							"goal", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand"};
+              
+    private String editOptions[] = {"Blue", "White", "Red", "Gray", "Green", "Orange"};
+       
+   // STANDARD SKELINGTON OF A JAVA APPLICATION
+    
+    public static void main (String[] args) {
+    	
+    	Image img = Toolkit.getDefaultToolkit().getImage("images/images/gold-ball.png");
+    	
+    	JOptionPane.showMessageDialog(null, "Welcome to CBall Maze Application!");
+    	
+    	CBallMaze frame = new CBallMaze();
+    	
+        frame.setSize(775, 650);
+        frame.createGUI();
+        frame.setVisible(true);
+        frame.setResizable(false);
+        frame.setTitle("Ball Maze Application");
+        frame.setLocationRelativeTo(null);
+        frame.setIconImage(img);
+       
+           
+    }
+    
+    // THIS METHOD CALLS THE GRAPHICAL USER INTERFACE AND ADDS ALL RELEVANT jFrames TO WINDOW
+ 
+    private void createGUI() {
+    	
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        Container window = getContentPane();
+        window.setLayout(new BorderLayout() );
+        
+        jPanel(window);
+        jPBottom(window);
+        jPRight(window);
+        jPRightTimer(window);
+        jPRightTop(window);
+        jPRightNav(window);
+        jPRightOption(window);
+        jPRightOption1(window);
+        jPRightControl(window);
+        jPRightStats(window);
+        jPRightTimerStat(window);
+        jPSlider(window);
+        Compass(window);
+        menuSetup(window);
+              
+    }
+ 
+    
+    public void jPBottom(Container window) {
+    	
+    	JPBottom = new JPanel();
+        JPBottom.setPreferredSize(new Dimension(745, 60));
+        JPBottom.setBackground(Color.orange);
+        window.add(JPBottom, BorderLayout.SOUTH);
+        JPBottom.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+    }
+  
+    
+    public void jPanel(Container window) {
+    	
+    	panel = new JPanel();
+        panel.setPreferredSize(new Dimension(590, 550));
+        panel.setBackground(Color.white);
+        window.add(panel, BorderLayout.CENTER);
+        panel.setLayout(new GridLayout(13,16));
+        panel.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+        panelButton(window);
+           
+    }
+  
+    
+    public void jPRightTop(Container window) {
+    	
+    	JPRightTop = new JPanel();
+        JPRightTop.setPreferredSize(new Dimension(150, 100));
+        JPRightTop.setBackground(Color.orange);
+        JPRight.add(JPRightTop);
+        JPRightTop.setLayout(new GridLayout(3,2));
+        JPRightTop.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        JPRight.add(JPRightTop, BorderLayout.CENTER);
+   
+    }
+    
+    
+    public void jPRight(Container window) {
+    	
+    	JPRight = new JPanel();
+        JPRight.setPreferredSize(new Dimension(180,550));
+        JPRight.setBackground(Color.orange);
+        window.add(JPRight, BorderLayout.EAST);
+        JPRight.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+        
+    }
+    
+    
+    public void jPRightTimer(Container window){
+    	
+    	JPRightTimer = new JPanel();
+        JPRightTimer.setPreferredSize(new Dimension(120, 50));
+        JPRightTimer.setBackground(Color.orange);
+        JPRight.add(JPRightTimer);
+        JPRightTimer.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        JPRight.add(JPRightTimer, BorderLayout.CENTER);
+   
+    }
+    
+    
+    public void jPRightNav(Container window) {
+    	
+    	JPRightNav = new JPanel();
+    	JPRightNav.setPreferredSize(new Dimension(150, 120));
+        JPRightNav.setBackground(Color.white);
+        JPRight.add(JPRightNav);
+        JPRightNav.setLayout(new GridLayout(3,3));
+        JPRightNav.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        JPRight.add(JPRightNav, BorderLayout.CENTER);
+   
+    }
+    
+    
+    public void jPRightOption(Container window)  {
+    	
+    	JPRightOption = new JPanel();
+        JPRightOption.setPreferredSize(new Dimension(150, 100));
+        JPRightOption.setBackground(Color.white);
+        JPRight.add(JPRightOption);
+        JPRightOption.setLayout(new GridLayout(2,2));
+        JPRightOption.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        JPRight.add(JPRightOption, BorderLayout.CENTER);
+        
+    }
+    
+    
+    public void jPRightOption1(Container window) {
+    	
+    	jLOption1 = new JButton("Option 1");
+        JPRightOption.add(jLOption1);
+        jLOption1.setFont(new Font("Serif", Font.BOLD, 10));
+        jLOption1.setBackground(Color.orange);
+        jLOption1.addActionListener(this);
+        
+        jLOption2 = new JButton("Option 2");
+        JPRightOption.add(jLOption2);
+        jLOption2.setFont(new Font("Serif", Font.BOLD, 10));
+        jLOption2.setBackground(Color.orange);
+        jLOption2.addActionListener(this);
+        
+        jLOption3 = new JButton("Option 3");
+        JPRightOption.add(jLOption3);
+        jLOption3.setFont(new Font("Serif", Font.BOLD, 10));
+        jLOption3.setBackground(Color.orange);
+        jLOption3.addActionListener(this);
+        
+        jBExit = new JButton("Exit");
+        JPRightOption.add(jBExit);
+        jBExit.setBackground(Color.orange);
+        jBExit.setFont(new Font("Serif", Font.BOLD, 10));
+        jBExit.addActionListener(this);
+        jBExit.setToolTipText("Click on this button to exit the application");
+   
+    }
+    
+    
+    public void jPRightControl(Container window) {
+    	
+    	jLBlank1 = new JButton(" ");
+        JPRightNav.add(jLBlank1);
+        jLBlank1.setBackground(Color.orange);
+        jLBlank1.setEnabled(false);
+        
+        jLUp = new JButton("^");
+        JPRightNav.add(jLUp);
+        jLUp.setBackground(Color.white);
+        jLUp.addActionListener(this);
+		jLUp.setEnabled(false);
+        
+        jLBlank2 = new JButton(" ");
+        JPRightNav.add(jLBlank2);
+        jLBlank2.setBackground(Color.orange);
+        jLBlank2.setEnabled(false);
+        
+        jLLeft = new JButton("<");
+        JPRightNav.add(jLLeft);
+        jLLeft.setBackground(Color.white);
+        jLLeft.addActionListener(this);
+		jLLeft.setEnabled(false);
+        
+        jLBlank3 = new JButton(" ");
+        JPRightNav.add(jLBlank3);
+        jLBlank3.setBackground(Color.orange);
+        jLBlank3.setEnabled(false);
+        
+        jLRight = new JButton(">");
+        JPRightNav.add(jLRight);
+        jLRight.setBackground(Color.white);
+        jLRight.addActionListener(this);
+		jLRight.setEnabled(false);
+		
+        jLBlank4 = new JButton(" ");
+        JPRightNav.add(jLBlank4);
+        jLBlank4.setBackground(Color.orange);
+        jLBlank4.setEnabled(false);
+        
+        jLDown = new JButton("v");
+        JPRightNav.add(jLDown);
+        jLDown.setBackground(Color.white);
+        jLDown.addActionListener(this);
+		jLDown.setEnabled(false);
+		
+        jLBlank5 = new JButton(" ");
+        JPRightNav.add(jLBlank5);
+        jLBlank5.setBackground(Color.orange);
+        jLBlank5.setEnabled(false);
+  
+    }
+    
+    
+    public void jPRightStats(Container window) {
+    	
+    	jLOption = new JLabel("Option: ");
+        JPRightTop.add(jLOption, BorderLayout.WEST);
+         
+        textField1 = new JTextField("  1  ");
+        JPRightTop.add(textField1);
+        textField1.setEditable(false);
+        
+        jLSquare = new JLabel("Sqaure: ");
+        JPRightTop.add(jLSquare);
+      
+        textField = new JTextField("  15  ");
+        JPRightTop.add(textField);
+        textField.setEditable(false);
+        
+        jLDirection = new JLabel("Direction: ");
+        JPRightTop.add(jLDirection, BorderLayout.WEST);
+        
+        textField3 = new JTextField("  South  ");
+        JPRightTop.add(textField3);
+        textField3.setEditable(false);
+   
+   }
+     
+    
+    public void jPRightTimerStat(Container window)
+    {
+    	jLTimer = new JLabel("_______DIGITAL TIMER_______");
+        JPRightTimer.add(jLTimer);
+        
+        textFieldHours = new JTextField("00");
+        JPRightTimer.add(textFieldHours);
+        textFieldHours.setEditable(false);
+      
+        jLColon = new JLabel(":");
+        JPRightTimer.add(jLColon);
+        
+        textFieldMins = new JTextField("00");
+        JPRightTimer.add(textFieldMins);
+        textFieldMins.setEditable(false);
+        
+        jLColon = new JLabel(":");
+        JPRightTimer.add(jLColon);
+        
+        textFieldSecs = new JTextField("00");
+        JPRightTimer.add(textFieldSecs);
+        textFieldSecs.setEditable(false);
+                   
+    }
+    
+    
+    public void jPSlider(Container window) {
+    	
+    	jLSpeed = new JLabel("Speed:");
+        JPBottom.add(jLSpeed);
+       
+        jSlider = new JSlider(SwingConstants.HORIZONTAL,0,90,45);
+        JPBottom.add(jSlider, BorderLayout.EAST);
+        jSlider.setPreferredSize(new Dimension(300, 45));
+        jSlider.setPaintTicks(true);
+        jSlider.setMajorTickSpacing(15);
+        jSlider.setBackground(Color.orange);
+        jSlider.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        jSlider.addChangeListener(this);
+        jSlider.setToolTipText("Adjust the speed: \n 0 - 15 very slow: \n 16 - 30 slow:"
+        		+ " \n 31 - 60 medium \n 61 - 75 fast \n 76 - 90 very fast   " );
+        
+        jBStart = new JButton("Run");
+        JPBottom.add(jBStart);
+        jBStart.setBackground(Color.white);
+        jBStart.addActionListener(this);
+        
+        jBAutoRun = new JButton("Auto Run");
+        JPBottom.add(jBAutoRun);
+        jBAutoRun.setBackground(Color.white);
+        jBAutoRun.addActionListener(this);
+        
+        jBReset = new JButton("Reset");
+        JPBottom.add(jBReset);
+        jBReset.setBackground(Color.white);
+        jBReset.addActionListener(this);
+    	jBReset.setEnabled(false);
+        
+        jBAct = new JButton("Act");
+        JPBottom.add(jBAct);
+        jBAct.setBackground(Color.white);
+        jBAct.addActionListener(this);
+  
+    }
+  
+    
+    public void panelButton(Container window) {
+    	
+    	try {
+			WhiteImage = new ImageIcon(Toolkit.getDefaultToolkit().createImage(CBallMaze.class.getResource
+					("images/whiteLarge.png")));
+			GrayImage = new ImageIcon(Toolkit.getDefaultToolkit().createImage(CBallMaze.class.getResource
+					("images/grayLarge.jpg")));
+			BlackImage = new ImageIcon(Toolkit.getDefaultToolkit().createImage(CBallMaze.class.getResource
+					("images/blackLarge.png")));
+			SandImage = new ImageIcon(Toolkit.getDefaultToolkit().createImage(CBallMaze.class.getResource
+					("images/sand.jpg")));
+			StoneImage = new ImageIcon(Toolkit.getDefaultToolkit().createImage(CBallMaze.class.getResource
+					("images/sandstone.jpg")));
+    	} 
+    	
+    	catch (Exception e) {
+			System.err.println("Image Error " + e);
+		}
+    	
+    	
+    	for (int loop = 0; loop < 208; loop++) {
+    		
+    		if (lev1 == true) {
+    			
+    			WhiteBlock(loop);
+        		Level1(loop);
+        		GoldenBall(loop);
+    			
+    		}	
+    		
+    		if (lev2 == true) {
+    			
+    			GrayBlock(loop);
+    			Level2(loop);
+    			GoldenBall(loop);
+    		}
+    		
+    		if (lev3 == true) {
+    			
+    			BlackBlock(loop);
+    			Level3(loop);
+    			GoldenBall(loop);
+    			
+    		}
+    	
+    	}
+    		
+    		panelButton[ballPosition].setIcon(Goldball);
+    }
+    
+    
+    public void removeLevel(JPanel panel) {
+    	
+    	panel.removeAll();
+    
+    }
+    
+ 
+    public void WhiteBlock(int loop) {  
+    	
+    		panelButton[loop] = new JButton("");
+    		panelButton[loop].setBackground(Color.white);
+    		panelButton[loop].setMargin(new Insets(0,0,0,0));
+    		panelButton[loop].setBorder(null);
+    		panel.add(panelButton[loop]);
+    		panelButton[loop].setIcon(WhiteImage);
+	
+    	
+    }
+    
+    
+    public void GrayBlock(int loop) {
+    	
+    	    panelButton[loop] = new JButton("");
+    		panelButton[loop].setBackground(new Color(211,211,211));
+    		panelButton[loop].setMargin(new Insets(0,0,0,0));
+    		panelButton[loop].setBorder(null);
+    		panel.add(panelButton[loop]);
+    		panelButton[loop].setIcon(GrayImage);
+    		
+    }
+    
+    
+    public void BlackBlock(int loop) {
+    	
+    		panelButton[loop] = new JButton("");
+    		panelButton[loop].setBackground(Color.black);
+    		panelButton[loop].setMargin(new Insets(0,0,0,0));
+    		panelButton[loop].setBorder(null);
+    		panel.add(panelButton[loop]);
+    		panelButton[loop].setIcon(BlackImage);
+    }
+    
+    
+    public void Level1(int loop) {
+    	
+    	
+    	if (Option1[loop].equals("sand")) {
+    		
+    		panelButton[loop].setIcon(SandImage);
+    	}
+    	
+    	if (Option1[loop].equals("goal")) {
+    		
+    		panelButton[loop].setIcon(StoneImage);
+    	}
+  
+    }
+    
+  
+    public void Level2(int loop) {
+    	
+    	if (Option2[loop].equals("sand")) {
+    		
+    		panelButton[loop].setIcon(SandImage);
+    	}
+    	
+    	if (Option2[loop].equals("goal")) {
+    		
+    		panelButton[loop].setIcon(StoneImage);
+    	}
+    	
+    }
+   
+    
+    public void Level3(int loop) {
+    	
+    	if (Option3[loop].equals("sand")) {
+    		
+    		panelButton[loop].setIcon(SandImage);
+    	}
+    	
+    	if (Option3[loop].equals("goal")) {
+    		
+    		panelButton[loop].setIcon(StoneImage);
+    	}
+    	
+    	panelButton[ballPosition].setIcon(Goldball);
+    	
+    } 	
+  
+    
+    public void GoldenBall(int loop) {
+    	
+    	try {
+    	Goldball = new ImageIcon(Toolkit.getDefaultToolkit().createImage(CBallMaze.class.getResource
+				("images/sand60x601.png")));
+    	}
+    	catch (Exception e) {
+			System.err.println("Image Error " + e);
+    	}
+    	
+    	goldenball = new JButton();
+    	goldenball.setIcon(Goldball);
+    	goldenball.setBorder(null); 	
+    }
+   
+    
+    public void actionPerformed(ActionEvent event) { 
+    	
+    	Object source = event.getSource();
+    	
+    	
+		if (source == jBExit) {
+			
+    		exit();
+    	}
+		
+    	if (source == jLOption1) {
+    		
+    		textField1.setText("  1  ");
+    		panel.setBackground(Color.white);
+    		
+    		ballPosition = 15;
+    		textField.setText(""+ballPosition);
+    		
+    		lev1 = true;
+    		lev2 = false;
+    		lev3 = false;
+    		
+    		jLOption1.setEnabled(false);
+    		jLOption2.setEnabled(true);
+    		jLOption3.setEnabled(true);
+    		
+    		removeLevel(panel);
+    		panelButton(panel);
+    		
+    	}
+    	
+    	if (source == jLOption2) {
+    		
+    		textField1.setText("  2  ");
+    		panel.setBackground(new Color(188, 192, 196));
+    		
+    		ballPosition = 0;
+    		textField.setText(""+ballPosition);
+    		
+    		lev1 = false;
+    		lev2 = true;
+    		lev3 = false;
+    		
+    		jLOption1.setEnabled(true);
+    		jLOption2.setEnabled(false);
+    		jLOption3.setEnabled(true);
+    		
+    		removeLevel(panel);
+    		panelButton(panel);
+    		
+    	}
+    	
+    	if (source == jLOption3) {
+    		
+    		JOptionPane.showMessageDialog(null, "Level 3 allows you to move the ball up and down, gravity does not apply in space!");
+    		
+    		textField1.setText("  3  ");
+    		panel.setBackground(Color.black);
+    		
+    		ballPosition = 97;
+    		textField.setText(""+ballPosition);
+    		
+    		lev1 = false;
+    		lev2 = false;
+    		lev3 = true;
+    		
+    		jLOption1.setEnabled(true);
+    		jLOption2.setEnabled(true);
+    		jLOption3.setEnabled(false);
+    		
+    		removeLevel(panel);
+    		panelButton(panel);
+    		
+    	}
+    
+    	// Directions
+    	
+    	if (source == jBStart) {
+    		 
+    		start();
+             	   
+    	 }
+    	
+    	if (source == jBAutoRun) {
+    		
+    		JOptionPane.showMessageDialog(null, "Auto Run activated, press the cancel button to disable the Auto Run feature.");
+    		autoRunTimer = new Timer(700, this);
+    		autoRunTimer.start();
+    	}
+    	
+    	if (source == jBAct) {
+    		
+    		if (lev1 == true) {
+    			
+    			actLevelOne();
+    		}
+    		
+    		if (lev2 == true) {
+    			
+    			actLevelTwo();
+    		}
+    		
+    		if (lev3 == true) {
+    			
+    			actLevelThree();
+    		}
+    		
+   
+    	}
+    	 
+    	 if (source == jLUp) {
+    		 
+    		 moveUp();
+    		 levelEnd();
+    	 }
+   
+    	 if (source == jLDown) {
+    		 
+    		 moveDown();
+    		 levelEnd();
+    	 }
+	    	
+    	 if (source == jLRight) {
+    		 
+    		 moveRight();
+    		 levelEnd();
+    	 }
+    	 else if (source == jLLeft) {
+    		
+    		 moveLeft();
+    		 levelEnd();
+    	 }
+    	  	 	
+    	
+    		// THIS IS A IF STATEMENT AS IT WRITTEN TO STOP THE TIMER, AND RESET THE TICKS TO 0
+    	
+    	 if (source == jBReset) {
+    		 
+    		levelReset();		
+    	 } 
+    	 
+    	 if (source == timer) {
+    		 
+  				ticks++;
+  				textFieldHours.setText(digit.format((ticks / 3600) % 24));
+  				textFieldSecs.setText(digit.format(ticks % 60));
+  				textFieldMins.setText(digit.format((ticks / 60)% 60));
+    	 }
+    	 
+    	 if (source == autoRunTimer) {
+    		 
+    		 autoRun();
+    	 }
+    	 
+    	 if (source == aboutItem) {
+    		 
+    		 JOptionPane.showMessageDialog(null, ""+aboutBoxString);
+    	 }
+    	 
+    	 if (source == exitItem) {
+    		 
+    		exit();
+    	}
+    	 
+    	 if (source == backColor) {
+    		 
+    	  backgroundColor();
+       }
+    	 
+    	if (source == foreColor) {
+    		
+    		foregroundColor();
+    	}
+    	
+    	if (source == hiScores) {
+    		
+    		yourHighScore();
+    	}
+    	 
+    }
+ 
+    
+    public void stateChanged(ChangeEvent event) {
+    	
+    	int speed = jSlider.getValue();
+    	System.out.println("Slider is at: " +speed);
+    	
+    		if (speed < 16)
+    			{
+    				timer.setDelay(1400);
+    			}
+    	
+    		else if (speed < 31)
+    			{
+    				timer.setDelay(1200);
+    			}
+    	
+    		else if (speed < 61)
+    			{
+    				timer.setDelay(1000);
+    			}
+    	
+    		else if (speed < 76)
+    			{
+    				timer.setDelay(600);
+    			}
+    	
+    		else if (speed < 91)
+    			{
+    				timer.setDelay(400);
+    			}
+    		
+    }
+ 
+    
+    public void Compass (Container window) {
+    	
+    	try {
+    		
+    		CompassWest = new ImageIcon(Toolkit.getDefaultToolkit().createImage(CBallMaze.class.getResource
+					("images/west.jpg")));
+    		CompassSouth = new ImageIcon(Toolkit.getDefaultToolkit().createImage(CBallMaze.class.getResource
+					("images/south.jpg")));
+    		CompassEast = new ImageIcon(Toolkit.getDefaultToolkit().createImage(CBallMaze.class.getResource
+					("images/east.jpg")));
+    		CompassNorth = new ImageIcon(Toolkit.getDefaultToolkit().createImage(CBallMaze.class.getResource
+					("images/north.jpg")));
+    		
+        	} 
+    	
+    	catch (Exception e) {
+    		System.err.println("Image Error " + e);
+    		
+        }
+      
+    		compass = new JButton();
+    		JPRight.add(compass);
+    		compass.setIcon(CompassSouth);
+    		compass.setBackground(Color.orange);
+    		compass.setBorder(BorderFactory.createLineBorder(Color.black));
+    		
+    }
+   
+    
+    public void menuSetup(Container window) {
+    		
+    	   topMenuBar = new JMenuBar();      					//create a menu bar
+    	   setJMenuBar(topMenuBar);
+    	   topMenuBar.setBackground(Color.orange);				//set the menu bar to the JFrame
+
+    	   fileMenu = new JMenu("File");     					// File menu, with open, save, exit
+    	   exitItem = new JMenuItem("Exit"); 					//EXIT item
+    	   fileMenu.add(exitItem);           					//add the items to the menu
+    	   exitItem.addActionListener(this); 					//add the listener to the item
+    	   topMenuBar.add(fileMenu);         					//add the menu to the menu bar
+
+    	   editMenu = new JMenu("Edit");     					// edit menu, could have copy, paste
+    	   foreColor = new JMenuItem("Foreground Colour"); 		//Foreground Colour item
+    	   editMenu.add(foreColor);           					//add the items to the menu
+    	   foreColor.addActionListener(this); 					//add the listener to the item
+    	   backColor = new JMenuItem("Background Colour");		//Background Colour item
+    	   editMenu.add(backColor);           					//add the items to the menu
+    	   backColor.addActionListener(this); 					//add the listener to the item
+    	   topMenuBar.add(editMenu );
+
+    	   hiScoreMenu = new JMenu("Hi-Scores");
+    	   topMenuBar.add(hiScoreMenu);
+    	   hiScores = new JMenuItem("Your High score");
+    	   hiScoreMenu.add(hiScores);
+    	   hiScores.addActionListener(this);
+
+    	   helpMenu = new JMenu("Help");   						// help menu, with  help topics, about application
+    	   helpItem = new JMenuItem("Help Topics");
+    	   helpMenu.add(helpItem);
+    	   helpItem.addActionListener(this);
+    	   aboutItem = new JMenuItem("About...");
+    	   helpMenu.add(aboutItem);
+    	   aboutItem.addActionListener(this);
+    	   topMenuBar.add(helpMenu);
+    	   
+    }
+   
+    
+    public void backgroundColor() {
+    	
+    	String input = (String) JOptionPane.showInputDialog(null, "Select A background colour!", "", JOptionPane.QUESTION_MESSAGE, null, editOptions, editOptions[1]);
+  	  
+    		System.out.print(""+input);
+  	  
+    		if (input == "Orange") {
+  		  
+    			JPBottom.setBackground(Color.orange);
+    			JPRight.setBackground(Color.orange);  
+  		  
+    		}
+  	  
+    		if (input == "Red") {
+  		  
+    			JPBottom.setBackground(Color.red);
+    			JPRight.setBackground(Color.red);  
+  		  
+    		}
+  	  
+    		if (input == "White") {
+  		  
+    			JPBottom.setBackground(Color.white);
+    			JPRight.setBackground(Color.white);  
+  		  
+    		}
+  	  
+    		if (input == "Blue") {
+  		  
+    			JPBottom.setBackground(Color.blue);
+    			JPRight.setBackground(Color.blue);  
+  		  
+    		}
+  	  
+    		if (input == "Green") {
+  		  
+    			JPBottom.setBackground(Color.green);
+    			JPRight.setBackground(Color.green);  
+  		  
+    		}
+  	  
+    		if (input == "Gray") {
+  		  
+    			JPBottom.setBackground(Color.gray);
+    			JPRight.setBackground(Color.gray);  
+  		  
+    	}  	
+    }
+   
+    
+    public void foregroundColor() {
+    	
+    	String input = (String) JOptionPane.showInputDialog(null, "Select A foreground colour!", "", JOptionPane.QUESTION_MESSAGE, null, editOptions, editOptions[1]);
+    	  
+		System.out.print(""+input);
+	  
+		if (input == "Orange") {
+		  
+			JPRightTop.setBackground(Color.orange);
+			JPRightTimer.setBackground(Color.orange);
+			JPRightNav.setBackground(Color.orange);
+			JPRightTop.setBackground(Color.orange);
+			jLOption1.setBackground(Color.orange);
+			jLOption2.setBackground(Color.orange);
+			jLOption3.setBackground(Color.orange);
+			jBExit.setBackground(Color.orange);
+			jSlider.setBackground(Color.orange);
+			jLBlank1.setBackground(Color.orange);
+			jLBlank2.setBackground(Color.orange);
+			jLBlank3.setBackground(Color.orange);
+			jLBlank4.setBackground(Color.orange);
+			jLBlank5.setBackground(Color.orange);
+			
+			topMenuBar.setBackground(Color.orange);
+		  
+		}
+	  
+		if (input == "Red") {
+		  
+			JPRightTop.setBackground(Color.red);
+			JPRightTimer.setBackground(Color.red);
+			JPRightNav.setBackground(Color.red);
+			JPRightTop.setBackground(Color.red);
+			jLOption1.setBackground(Color.red);
+			jLOption2.setBackground(Color.red);
+			jLOption3.setBackground(Color.red);
+			jBExit.setBackground(Color.red);
+			jSlider.setBackground(Color.red);
+			jLBlank1.setBackground(Color.red);
+			jLBlank2.setBackground(Color.red);
+			jLBlank3.setBackground(Color.red);
+			jLBlank4.setBackground(Color.red);
+			jLBlank5.setBackground(Color.red);
+			
+			topMenuBar.setBackground(Color.red);
+			
+		  
+		}
+	  
+		if (input == "White") {
+		  
+			JPRightTop.setBackground(Color.white);
+			JPRightTimer.setBackground(Color.white);
+			JPRightNav.setBackground(Color.white);
+			JPRightTop.setBackground(Color.white);
+			jLOption1.setBackground(Color.white);
+			jLOption2.setBackground(Color.white);
+			jLOption3.setBackground(Color.white);
+			jBExit.setBackground(Color.white);
+			jSlider.setBackground(Color.white);
+			jLBlank1.setBackground(Color.white);
+			jLBlank2.setBackground(Color.white); 
+			jLBlank3.setBackground(Color.white); 
+			jLBlank4.setBackground(Color.white); 
+			jLBlank5.setBackground(Color.white); 
+			
+			topMenuBar.setBackground(Color.white);
+		  
+		}
+	  
+		if (input == "Blue") {
+		  
+			JPRightTop.setBackground(Color.blue);
+			JPRightTimer.setBackground(Color.blue);
+			JPRightNav.setBackground(Color.blue);
+			JPRightTop.setBackground(Color.blue);
+			jLOption1.setBackground(Color.blue);
+			jLOption2.setBackground(Color.blue);
+			jLOption3.setBackground(Color.blue);
+			jBExit.setBackground(Color.blue);
+			jSlider.setBackground(Color.blue);
+			jLBlank1.setBackground(Color.blue);
+			jLBlank2.setBackground(Color.blue); 
+			jLBlank3.setBackground(Color.blue); 
+			jLBlank4.setBackground(Color.blue); 
+			jLBlank5.setBackground(Color.blue); 
+			
+			topMenuBar.setBackground(Color.blue);
+		}
+	  
+		if (input == "Green") {
+		  
+			JPRightTop.setBackground(Color.green);
+			JPRightTimer.setBackground(Color.green);
+			JPRightNav.setBackground(Color.green);
+			JPRightTop.setBackground(Color.green);
+			jLOption1.setBackground(Color.green);
+			jLOption2.setBackground(Color.green);
+			jLOption3.setBackground(Color.green);
+			jBExit.setBackground(Color.green);
+			jSlider.setBackground(Color.green);
+			jLBlank1.setBackground(Color.green);
+			jLBlank2.setBackground(Color.green);
+			jLBlank3.setBackground(Color.green);
+			jLBlank4.setBackground(Color.green);
+			jLBlank5.setBackground(Color.green);
+			
+			topMenuBar.setBackground(Color.green);
+		  
+		}
+	  
+		if (input == "Gray") {
+		  
+			JPRightTop.setBackground(Color.gray);
+			JPRightTimer.setBackground(Color.gray);
+			JPRightNav.setBackground(Color.gray);
+			JPRightTop.setBackground(Color.gray);
+			jLOption1.setBackground(Color.gray);
+			jLOption2.setBackground(Color.gray);
+			jLOption3.setBackground(Color.gray);
+			jBExit.setBackground(Color.gray);
+			jSlider.setBackground(Color.gray);
+			jLBlank1.setBackground(Color.gray); 
+			jLBlank2.setBackground(Color.gray);
+			jLBlank3.setBackground(Color.gray);
+			jLBlank4.setBackground(Color.gray);
+			jLBlank5.setBackground(Color.gray);
+			
+			topMenuBar.setBackground(Color.gray);
+		  
+		}  	
+    	
+    }
+    
+    
+    public void exit() {
+    	
+    	int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", null, JOptionPane.YES_NO_CANCEL_OPTION);	
+		
+		if (input == JOptionPane.YES_OPTION) {
+					System.exit(0);
+					
+		 }	 
+    }
+  
+    
+    public void start() {
+    	
+			timer.start();
+			hiscore = 0;
+			
+			jLUp.setEnabled(true);
+			jLDown.setEnabled(true);
+			jLRight.setEnabled(true);
+			jLLeft.setEnabled(true);
+			jBReset.setEnabled(true);
+			jBStart.setEnabled(false);
+			jLOption1.setEnabled(false);
+			jLOption2.setEnabled(false);
+			jLOption3.setEnabled(false);
+			jBAutoRun.setEnabled(false);
+			jBAct.setEnabled(false);
+			
+    }
+ 
+    
+    public void yourHighScore() {
+    	
+    	JOptionPane.showMessageDialog(null,"Your last score is: " +hiscore +" seconds!");
+    	
+    }
+    
+    public void moveLeft() {
+    	
+    	textField3.setText("  West  ");
+		compass.setIcon(CompassWest);
+		
+	
+			if (lev1 == true) {
+		
+				if (Option1[ballPosition - 1].equals("sand") || (Option1[ballPosition - 1].equals("goal"))) {
+    		
+					ballPosition--;
+					prevPosition = ballPosition +1;
+					panelButton[ballPosition].setIcon(Goldball);
+					panelButton[prevPosition].setIcon(SandImage);	
+					textField.setText(""+ballPosition);
+    		
+				}
+
+				if (ballPosition == 9 || ballPosition == 54 || ballPosition == 101 || ballPosition == 146
+					|| ballPosition == 150) {
+	
+			
+					ballPosition = ballPosition + 48;
+					prevPosition = ballPosition -48;
+					panelButton[ballPosition].setIcon(Goldball);
+					panelButton[prevPosition].setIcon(SandImage);
+					textField3.setText("  South  ");
+					compass.setIcon(CompassSouth);
+					textField.setText(""+ballPosition);
+				}
+			}
+	
+			if (lev2 == true) {
+		
+				if (Option2[ballPosition - 1].equals("sand") || (Option2[ballPosition - 1].equals("goal"))) {
+    		
+					ballPosition--;
+					prevPosition = ballPosition +1;
+					panelButton[ballPosition].setIcon(Goldball);
+					panelButton[prevPosition].setIcon(SandImage);	
+					textField.setText(""+ballPosition);
+					
+				}
+		
+				if (ballPosition == 154 || ballPosition == 146 || ballPosition == 49 || ballPosition == 102) {
+    			
+
+					ballPosition = ballPosition + 48;
+					prevPosition = ballPosition -48;
+					panelButton[ballPosition].setIcon(Goldball);
+    				panelButton[prevPosition].setIcon(SandImage);
+    				textField3.setText("  South  ");
+    				compass.setIcon(CompassSouth);
+    				textField.setText(""+ballPosition);	
+				}
+			}
+			
+			if (lev3 == true) {
+	
+				if (Option3[ballPosition - 1].equals("sand") || (Option3[ballPosition - 1].equals("goal"))) {
+    		 
+					ballPosition--;
+					prevPosition = ballPosition +1;
+					panelButton[ballPosition].setIcon(Goldball);
+					panelButton[prevPosition].setIcon(SandImage);	
+					textField.setText(""+ballPosition);
+					
+				}
+			}
+	 	}
+    	
+    
+    
+    public void moveRight() {
+    	
+    	textField3.setText("  East  ");
+		 compass.setIcon(CompassEast);
+		
+		 	if (lev1 == true) {
+		 		
+		 		if (Option2[ballPosition + 1].equals("sand")) {
+	    		 
+		 			ballPosition++;
+		 			prevPosition = ballPosition -1;
+		 			panelButton[ballPosition].setIcon(Goldball);
+		 			panelButton[prevPosition].setIcon(SandImage);	
+		 			textField.setText(""+ballPosition);
+		 		}	
+		 		
+		 		if (ballPosition == 59 || ballPosition == 108 || ballPosition == 150) {
+			
+		 			ballPosition = ballPosition + 48;
+		 			prevPosition = ballPosition -48;
+		 			panelButton[ballPosition].setIcon(Goldball);
+		 			panelButton[prevPosition].setIcon(SandImage);
+		 			textField3.setText("  South  ");
+		 			compass.setIcon(CompassSouth);
+		 			textField.setText(""+ballPosition);
+		 	}	
+		 } 
+      		
+		 	if (lev2 == true) {
+			
+		 		if (Option2[ballPosition + 1].equals("sand")) {
+	    		 
+		 			ballPosition++;
+		 			prevPosition = ballPosition -1;
+		 			panelButton[ballPosition].setIcon(Goldball);
+		 			panelButton[prevPosition].setIcon(SandImage);	
+		 			textField.setText(""+ballPosition);
+    		
+		 		if (ballPosition == 7 || ballPosition == 57 || ballPosition == 110 || ballPosition == 102 ||
+		 				ballPosition == 154) {
+    			
+		 			ballPosition = ballPosition + 48;
+		 			prevPosition = ballPosition -48;
+		 			panelButton[ballPosition].setIcon(Goldball);
+		 			panelButton[prevPosition].setIcon(SandImage);
+		 			textField3.setText("  South  ");
+		 			compass.setIcon(CompassSouth);
+		 			textField.setText(""+ballPosition);	
+		 		}
+    		
+		 		if (ballPosition == 200) {
+ 
+		 			ballPosition = ballPosition + 32;
+		 			prevPosition = ballPosition -32;
+		 			panelButton[ballPosition].setIcon(Goldball);
+		 			panelButton[prevPosition].setIcon(SandImage);
+		 			textField3.setText("  South  ");
+		 			compass.setIcon(CompassSouth);
+		 			textField.setText(""+ballPosition);		
+		 		}
+		 	}
+		 }
+		 	
+		 	if (lev3 == true) {
+			
+		 		if (Option3[ballPosition + 1].equals("sand")) {
+	    		 
+		 			ballPosition++;
+		 			prevPosition = ballPosition -1;
+		 			panelButton[ballPosition].setIcon(Goldball);
+		 			panelButton[prevPosition].setIcon(SandImage);	
+		 			textField.setText(""+ballPosition);
+		 		}
+		 	} 
+	 }
+	 
+    	
+    
+ 	public void moveDown() {
+ 		
+ 		textField3.setText("  South  ");
+		compass.setIcon(CompassSouth);
+		
+			if (lev3 == true) {
+    		
+				if (Option3[ballPosition + 15].equals("sand")) {
+		    		 
+					ballPosition = ballPosition + 15;
+		 				prevPosition = ballPosition - 15;
+		 				panelButton[ballPosition].setIcon(Goldball);
+		 				panelButton[prevPosition].setIcon(SandImage);	
+		 				textField.setText(""+ballPosition);
+				}		
+			} 
+    	}
+ 	
+ 
+ 	public void moveUp() {
+ 		
+ 		textField3.setText("  North  ");
+		compass.setIcon(CompassNorth);
+		
+			if (lev3 == true) {
+		
+				if (Option3[ballPosition - 15].equals("sand")) {
+	    		 
+					ballPosition = ballPosition - 15;
+					prevPosition = ballPosition + 15;
+					panelButton[ballPosition].setIcon(Goldball);
+					panelButton[prevPosition].setIcon(SandImage);
+					textField.setText(""+ballPosition);
+				}		
+			}    
+ 	
+ }
+ 	
+ 	public void autoRun() {
+ 			
+ 			start();
+ 			jBReset.setEnabled(false);
+ 			jLLeft.doClick();
+ 			levelEnd();
+ 					
+ 	}
+ 	
+ 	public void levelEnd() {
+ 		
+ 		if (lev1 == true || lev2 == true) {
+	 		
+ 			if (ballPosition == 192) {
+	
+ 				timer.stop();
+ 				autoRunTimer.stop();
+ 				JOptionPane.showMessageDialog(null, "Congratulation! Your time is: \n                 " +ticks + " seconds");
+ 				hiscore = ticks;
+ 				ticks = 0;
+
+ 				jLUp.setEnabled(false);
+ 				jLDown.setEnabled(false);
+ 				jLRight.setEnabled(false);
+ 				jLLeft.setEnabled(false);
+ 				jBReset.setEnabled(false);
+ 				jBStart.setEnabled(true);
+ 				jLOption1.setEnabled(true);
+ 				jLOption2.setEnabled(true);
+ 				jLOption3.setEnabled(true);
+ 				jBAutoRun.setEnabled(true);
+ 				jBAct.setEnabled(true);
+			
+		if (lev1 == true) {
+				
+			ballPosition = 15;
+		panelButton[15].setIcon(Goldball);	
+ 		panelButton[192].setIcon(StoneImage);	
+ 		textField.setText(""+ballPosition);
+ 		textFieldHours.setText("00");
+        textFieldSecs.setText("00");
+        textFieldMins.setText("00");
+        
+		}
+			
+		if (lev2 == true) {
+				
+			ballPosition = 0;
+		panelButton[0].setIcon(Goldball);
+ 		panelButton[192].setIcon(StoneImage);
+ 		textField.setText(""+ballPosition);
+ 		textFieldHours.setText("00");
+        textFieldSecs.setText("00");
+        textFieldMins.setText("00");
+        
+			}
+ 	  }		
+ 	}
+ 	
+	if (lev3 == true) {
+			
+		if (ballPosition == 180) {
+	   		
+			timer.stop();
+			JOptionPane.showMessageDialog(null, "Congratulation! Your time is: \n                 " +ticks + " seconds");
+			hiscore = ticks;
+			ticks = 0;
+
+       		jLUp.setEnabled(false);
+				jLDown.setEnabled(false);
+				jLRight.setEnabled(false);
+				jLLeft.setEnabled(false);
+				jBReset.setEnabled(false);
+				jBStart.setEnabled(true);
+				jLOption1.setEnabled(true);
+				jLOption2.setEnabled(true);
+				jLOption3.setEnabled(true);
+					
+				ballPosition = 97;
+			panelButton[ballPosition].setIcon(Goldball);
+ 			panelButton[180].setIcon(StoneImage);
+ 			textField.setText(""+ballPosition);
+ 			textFieldHours.setText("00");
+            textFieldSecs.setText("00");
+           	textFieldMins.setText("00");
+           	textField3.setText("  North  ");
+    		compass.setIcon(CompassNorth);
+    		
+		}
+	 
+}
+ 	}
+ 	
+ 	public void levelReset() {
+ 		
+ 		 if (lev1 == true) {
+				
+			 	panelButton[ballPosition].setIcon(SandImage);
+				ballPosition = 15;
+				textField.setText("15");
+ 		 	panelButton[ballPosition].setIcon(Goldball);
+ 		 	panelButton[192].setIcon(StoneImage);
+ 		 		
+			}
+			
+		if (lev2 == true) {
+				
+				panelButton[ballPosition].setIcon(SandImage);
+				ballPosition = 0;
+				textField.setText("0");
+ 		 	panelButton[ballPosition].setIcon(Goldball);
+ 		 	panelButton[192].setIcon(StoneImage);
+ 	
+				}
+			
+		if (lev3 == true) {
+				
+				panelButton[ballPosition].setIcon(SandImage);
+				ballPosition = 97;
+				textField.setText("97");
+ 		 	panelButton[ballPosition].setIcon(Goldball);
+ 		 	panelButton[180].setIcon(StoneImage);
+ 	
+				}
+		 	
+     	textFieldHours.setText("00");
+         textFieldSecs.setText("00");
+        	textFieldMins.setText("00");
+        	ticks = 0;
+			timer.stop();
+			jLUp.setEnabled(false);
+			jLDown.setEnabled(false);
+			jLRight.setEnabled(false);
+			jLLeft.setEnabled(false);
+			jBReset.setEnabled(false);
+			jBStart.setEnabled(true);
+			jLOption1.setEnabled(true);
+			jLOption2.setEnabled(true);
+			jLOption3.setEnabled(true);
+			
+			JOptionPane.showMessageDialog(null, "Level reset, please press run to play again.");
+ 	}
+    
+
+	public void actLevelOne() {
+		
+		moveLeft();
+		jLLeft.doClick();
+		
+		if (ballPosition == 192) {
+			levelReset();
+			levelEnd();
+		}
+			
+	}
+	
+	public void actLevelTwo() {
+		
+		 while (ballPosition == 192) {
+				
+				levelReset();
+				levelEnd();
+		 }	
+		
+		 if (Option2[ballPosition + 1].equals("sand") && ballPosition > 100) {
+			moveLeft();
+			jLLeft.doClick();
+		}
+		
+		 if (Option2[ballPosition - 1].equals("sand")) {
+			moveLeft();
+			jLLeft.doClick();
+		}
+				
+	}
+	
+	public void actLevelThree() {
+		
+		if (Option3[ballPosition - 15].equals("sand")) {
+			moveUp();
+			jLUp.doClick();
+		}
+			else if (Option3[ballPosition + 1].equals("sand")) {
+			moveRight();
+			jLRight.doClick();
+		}
+			else if (Option3[ballPosition - 1].equals("sand")) {
+			moveLeft();
+			jLLeft.doClick();
+		}
+			else if (Option3[ballPosition + 15].equals("sand")) {
+			moveDown();
+			jLDown.doClick();
+		}
+	
+		}
+		
+	
+	
+}
